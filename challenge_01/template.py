@@ -3,6 +3,7 @@ import torch.nn as nn
 
 class MultiLayerPerceptron(nn.Module):
     def __init__(self, layer_dim_list, activation, batch_norm, dropout_p):
+        pass
 
     def create_mlp(self):
         pass
@@ -29,6 +30,6 @@ def training_loop(model, dataloader):
 
 
 model = MultiLayerPerceptron([20, 40, 40, 1], torch.relu, True, 0.1)
-dataloader = torch.utils.data.DataLoader(Dataset, batch_size=)
+dataloader = torch.utils.data.DataLoader(Dataset, batch_size=500)
 
 training_loop(model, dataloader)

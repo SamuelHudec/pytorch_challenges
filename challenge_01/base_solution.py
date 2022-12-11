@@ -1,10 +1,24 @@
+from typing import List, Tuple
+
 import torch
 import torch.nn as nn
 import torch.utils.data as data
 
 
 class MultiLayerPerceptron(nn.Module):
-    def __init__(self, layer_dim_list, activation, batch_norm, dropout_p):
+    """
+    Model class follow rules by nn.Module
+    I tried to fill class by glues I got.
+    Key trick is create hidden layers by blocks follow nn.Sequential
+    """
+
+    def __init__(
+        self,
+        layer_dim_list: List[int],
+        activation: nn.modules.activation,
+        batch_norm: bool,
+        dropout_p: float,
+    ) -> None:
         super().__init__()
         self.layer_dim_list = layer_dim_list
         self.activation = activation
@@ -12,7 +26,7 @@ class MultiLayerPerceptron(nn.Module):
         self.dropout_p = dropout_p
         self._create_mlp()
 
-    def _create_block(self, n_in, n_out, batch_norm):
+    def _create_block(self, n_in: int, n_out: int, batch_norm: bool) -> nn.Module:
         if batch_norm:
             block = nn.Sequential(
                 nn.Linear(n_in, n_out),
@@ -38,32 +52,43 @@ class MultiLayerPerceptron(nn.Module):
         blocks.append(nn.Linear(self.layer_dim_list[-2], self.layer_dim_list[-1]))
         self.layer = nn.Sequential(*blocks)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.layer(x)
 
 
 class FakeDataset(data.Dataset):
-    def __init__(self, n_samples, n_feats):
+    def __init__(self, n_samples: int, n_feats: int) -> None:
         self.data = torch.rand((n_samples, n_feats))
         self.target = torch.randint(0, 2, size=(n_samples, 1), dtype=torch.float)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
         return self.data[idx], self.target[idx]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
 
-def training_loop(model, dataloader, lr):
+def training_loop(model: nn.Module, dataloader: data.DataLoader, lr: float):
+
+    # define optimizer and fill arguments
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+    # define loss, I choose cross entropy because it fits for classification task
     loss_function = nn.CrossEntropyLoss()
+    # Set current loss value
     current_loss = 0.0
+    # Iterate over the DataLoader for training data
     for batch_idx, (features, targets) in enumerate(dataloader):
+        # every batch you need zero the gradients
         optimizer.zero_grad()
+        # forward pass
         y_hat = model(features)
+        # calculate loss
         loss = loss_function(y_hat, targets)
+        # backward pass
         loss.backward()
+        # update parameters
         optimizer.step()
+        # prepare for statistics
         current_loss += loss.item()
         print("Loss after mini-batch %5d: %.3f" % (batch_idx, current_loss))
 

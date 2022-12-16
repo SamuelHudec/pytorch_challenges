@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 
 import torch
 import torch.nn as nn
@@ -15,7 +15,7 @@ class MultiLayerPerceptron(nn.Module):
     def __init__(
         self,
         layer_dim_list: List[int],
-        activation: nn.modules.activation,
+        activation: Callable,
         batch_norm: bool,
         dropout_p: float,
     ) -> None:
@@ -24,23 +24,18 @@ class MultiLayerPerceptron(nn.Module):
         self.activation = activation
         self.batch_norm = batch_norm
         self.dropout_p = dropout_p
-        self._create_mlp()
+        self.layer = self._create_mlp()
 
     def _create_block(self, n_in: int, n_out: int, batch_norm: bool) -> nn.Module:
+        block = []
+        block.append(nn.Linear(n_in, n_out))
         if batch_norm:
-            block = nn.Sequential(
-                nn.Linear(n_in, n_out),
-                nn.BatchNorm1d(n_out),
-                nn.Dropout(p=self.dropout_p),
-                self.activation(),
-            )
-        else:
-            block = nn.Sequential(
-                nn.Linear(n_in, n_out), nn.Dropout(p=self.dropout_p), self.activation()
-            )
-        return block
+            block.append(nn.BatchNorm1d(n_out))
+        block.append(nn.Dropout(p=self.dropout_p))
+        block.append(self.activation())
+        return nn.Sequential(*block)
 
-    def _create_mlp(self):
+    def _create_mlp(self) -> nn.Module:
         blocks = []
         blocks.append(nn.Flatten())
         for i in range(len(self.layer_dim_list) - 2):
@@ -50,7 +45,7 @@ class MultiLayerPerceptron(nn.Module):
                 )
             )
         blocks.append(nn.Linear(self.layer_dim_list[-2], self.layer_dim_list[-1]))
-        self.layer = nn.Sequential(*blocks)
+        return nn.Sequential(*blocks)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.layer(x)
@@ -74,8 +69,7 @@ def training_loop(model: nn.Module, dataloader: data.DataLoader, lr: float):
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     # define loss, I choose cross entropy because it fits for classification task
     loss_function = nn.CrossEntropyLoss()
-    # Set current loss value
-    current_loss = 0.0
+
     # Iterate over the DataLoader for training data
     for batch_idx, (features, targets) in enumerate(dataloader):
         # every batch you need zero the gradients
@@ -89,8 +83,7 @@ def training_loop(model: nn.Module, dataloader: data.DataLoader, lr: float):
         # update parameters
         optimizer.step()
         # prepare for statistics
-        current_loss += loss.item()
-        print("Loss after mini-batch %5d: %.3f" % (batch_idx, current_loss))
+        print("Loss after mini-batch %5d: %.3f" % (batch_idx, loss.item()))
 
     print("Training process has finished.")
 

@@ -1,9 +1,10 @@
 # Pytorch Challenges
 
-This project was created as an initiative to kick myself to a deeper understanding of the pytorch library. 
-The whole effort is to use my competitiveness. I asked my skilled colleague to create challenges for me.
+This project was created as an initiative to kick myself for deeper understanding of the pytorch library. 
+I asked my skilled colleague to create challenges for me. Knowledge of programming and mathematics is required.
 
 Each task is specified in a `template.py` file in challenge folder. Based on it, I should be able to compose a solution.
+Of course every one can use his creativity to deliver running solution.
 
 ## First Challenge
 

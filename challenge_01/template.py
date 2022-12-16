@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class MultiLayerPerceptron(nn.Module):
     def __init__(self, layer_dim_list, activation, batch_norm, dropout_p):
         pass

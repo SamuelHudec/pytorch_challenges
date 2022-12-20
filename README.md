@@ -4,7 +4,7 @@ This project was created as an initiative to kick myself for deeper understandin
 I asked my skilled colleague to create challenges for me. Knowledge of programming and mathematics is required.
 
 Each task is specified in a `template.py` file in challenge folder. Based on it, I should be able to compose a solution.
-Of course every one can use his creativity to deliver running solution.
+Remember template is only __hint file__. Of course every one can use his creativity to deliver running solution.
 
 ## First Challenge
 

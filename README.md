@@ -8,7 +8,12 @@ Remember template is only __hint file__. Of course every one can use his creativ
 
 ## First Challenge
 
-This one is simple as possible. Code "MultiLayerPerceptron" that means simple neural network for classification task.
+This one is simple as possible. Code "MultiLayerPerceptron" that means simple neural network.
 I found as challenge is to create neural network by list, use different activation function and apply batch normalisation. 
 Also challenge learns me to create fake data, what is baseline for test composed `nn.Module` model. 
 When I finished task I can play with some famous data as `CIFAR10` and more.
+
+## Second Challenge
+
+Now lets move further straight to NLP basics. What is more basic as Self Attention Head. If you understand attention, 
+than you will understand core of transformers as well. 

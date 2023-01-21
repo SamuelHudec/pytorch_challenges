@@ -15,5 +15,6 @@ When I finished task I can play with some famous data as `CIFAR10` and more.
 
 ## Second Challenge
 
-Now lets move further straight to NLP basics. What is more basic as Self Attention Head. If you understand attention, 
-than you will understand core of transformers as well. 
+Now lets move further straight to NLP basics. What is more basic as Self Attention Head? If you understand attention, 
+than you will understand core of transformers as well. Challenge trains me code just model from paper equation. 
+Narutaly, every one can continue with multi head attention and finish with transformer. 

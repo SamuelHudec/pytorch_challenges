@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
@@ -13,9 +15,9 @@ class SelfAttention(nn.Module):
         self.e_length = embedding_length
         self.TW = self._trainable_weights()
 
-    def _trainable_weights(self):
-        k = nn.Linear(self.e_length, self.e_length)
+    def _trainable_weights(self) -> Tuple[nn.Module, nn.Module, nn.Module]:
         q = nn.Linear(self.e_length, self.e_length)
+        k = nn.Linear(self.e_length, self.e_length)
         v = nn.Linear(self.e_length, self.e_length)
         return q, k, v
 

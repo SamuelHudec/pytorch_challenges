@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import torch
+import math
 import torch.nn.functional as F
 import torch.nn as nn
 
@@ -25,7 +26,7 @@ class SelfAttention(nn.Module):
         # Scaled Dot-Product Attention
         q, k, v = self.TW
         s = torch.matmul(q(x), torch.t(k(x)))
-        w = nn.functional.normalize(s)
+        w = s / math.sqrt(self.e_length) # F.normalize(s)
         w = F.softmax(w)
         return torch.matmul(w, v(x))
 
@@ -33,4 +34,4 @@ if __name__ == "__main__":
     embdd_len = 50
     x = torch.randint(0, 500, (10, embdd_len), dtype=torch.float32)  # tokenizer(text)
     model = SelfAttention(embdd_len)
-    print(model.forward(x))
+    print(model(x))

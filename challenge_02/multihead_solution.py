@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import torch
+import math
 import torch.nn.functional as F
 import torch.nn as nn
 
@@ -51,7 +52,7 @@ class MultiHeadAttention(nn.Module):
         if self.mask is not None:
             s = s.masked_fill(self.mask == 0, float("-1e20"))
 
-        w = nn.functional.normalize(s)
+        w = s / math.sqrt(self.one_head)
         w = F.softmax(w, dim=-1)
         to_concat = torch.matmul(w, value)
 

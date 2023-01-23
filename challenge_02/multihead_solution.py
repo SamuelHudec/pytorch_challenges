@@ -29,21 +29,22 @@ class MultiHeadAttention(nn.Module):
         # Scaled Dot-Product Attention
         q, k, v, out_cnct = self.TW
 
-        seq_len = key.size(0)
-        seq_len_query = query.size(0) # for decoder
+        batch_size = key.size(0)
+        seq_len = key.size(1)
+        seq_len_query = query.size(1) # for decoder
 
-        query = query.view(seq_len_query, self.heads, self.one_head)
-        key = key.view(seq_len, self.heads, self.one_head)
-        value = value.view(seq_len, self.heads, self.one_head)
+        query = query.view(batch_size, seq_len_query, self.heads, self.one_head)
+        key = key.view(batch_size, seq_len, self.heads, self.one_head)
+        value = value.view(batch_size, seq_len, self.heads, self.one_head)
 
         query = q(query)
         key = k(key)
         value = v(value)
 
         # transpose to get right dimensions, this almost blow my mind
-        query = query.transpose(0,1)
-        key = key.transpose(0,1)
-        value = value.transpose(0,1)
+        query = query.transpose(1,2)
+        key = key.transpose(1,2)
+        value = value.transpose(1,2)
 
         s = torch.matmul(query, key.transpose(-1,-2))
 
@@ -55,13 +56,13 @@ class MultiHeadAttention(nn.Module):
         to_concat = torch.matmul(w, value)
 
         # compress it together
-        to_concat = to_concat.transpose(1,2).contiguous().view(seq_len_query, self.e_length)
+        to_concat = to_concat.transpose(1,2).contiguous().view(batch_size, seq_len_query, self.e_length)
 
         return out_cnct(to_concat)
 
 if __name__ == "__main__":
     embdd_len = 512
     heads = 8
-    x = torch.randint(0, 500, (10, embdd_len), dtype=torch.float32)
+    x = torch.randint(0, 500, (32, 10, embdd_len), dtype=torch.float32)
     model = MultiHeadAttention(embdd_len, heads)
-    print(model.forward(x, x, x))
+    print(model(x, x, x))

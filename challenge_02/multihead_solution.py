@@ -41,9 +41,9 @@ class MultiHeadAttention(nn.Module):
         value = v(value)
 
         # transpose to get right dimensions, this almost blow my mind
-        query = query.transpose(1,2)
-        key = key.transpose(1,2)
-        value = value.transpose(1,2)
+        query = query.transpose(0,1)
+        key = key.transpose(0,1)
+        value = value.transpose(0,1)
 
         s = torch.matmul(query, key.transpose(-1,-2))
 

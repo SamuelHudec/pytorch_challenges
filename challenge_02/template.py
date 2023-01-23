@@ -14,11 +14,9 @@ class SelfAttention(nn.Module):
 
     def forward(self, x):
         q, k, v = self.W
-        # norm_attention = F.softmax(q*k)
-        # (norm_attention * v).sum(-1)
-        return
+        return None
 
-
-x = torch.randint(0, 500, (10, 50))  # tokenizer(text)
-model = SelfAttention()
-model.forward(x)
+if __name__ == "__main__":
+    x = torch.randint(0, 500, (10, 50))  # tokenizer(text)
+    model = SelfAttention()
+    model.forward(x)

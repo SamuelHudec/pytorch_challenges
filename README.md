@@ -26,5 +26,8 @@ for decoder. This solution can be used in transformer.
 Let's continue with creating model moduls from paper as before. Situation is now different, no examples as with MLP 
 and NLP tasks.
 
+## My best practices
+* always develop in classical script not in jupyter notebook. This leads to the smoothness of the solution.
+* jupyter notebook is powerful, but use that power properly. I develop in scripts and using jupyter just for testing model parts.
 
-Anybody who have an idea for this challenge please do not hesitate to share. Challenge is accepted in advance.
+__Anybody who have an idea for this challenge please do not hesitate to share. Challenge is accepted in advance.__

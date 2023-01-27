@@ -20,3 +20,11 @@ than you will understand core of transformers as well. Challenge trains me code 
 Narutaly, every one can continue with multi head attention as I did (universal also for decoder) and finish with 
 transformer (on my list). Multi haead attention have more advanced solution using also batch size and also ready 
 for decoder. This solution can be used in transformer.
+
+## Third Challenge
+
+Let's continue with creating model moduls from paper as before. Situation is now different, no examples as with MLP 
+and NLP tasks.
+
+
+Anybody who have an idea for this challenge please do not hesitate to share. Challenge is accepted in advance.

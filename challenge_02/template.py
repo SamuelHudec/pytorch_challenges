@@ -19,4 +19,4 @@ class SelfAttention(nn.Module):
 if __name__ == "__main__":
     x = torch.randint(0, 500, (10, 50))  # tokenizer(text)
     model = SelfAttention()
-    model.forward(x)
+    model(x)

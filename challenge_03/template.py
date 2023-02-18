@@ -21,13 +21,10 @@ class GraphProd2Vec(nn.Module):
         return x, x_GAT
 
 if __name__ == "__main__":
-    x = torch.rand(50, 10)
-    labels = torch.tensor([[1, 30, 48, 2, 5],
-                           [2, 4, 5, 3]])
-    model = GraphProd2Vec()
-    model(x)
-
-# edge_index=[
-#     [1,1,1,1,2,2,2],
-#     [30,48,2,5,4,5,3]
-#  ]
+    n_items = 5
+    emb_size = 50
+    x = torch.rand(n_items, emb_size)
+    edge_index = torch.tensor([[1, 1, 1, 1, 3, 4, 2, 2, 5, 5], [3, 4, 5, 2, 2, 5, 4, 5, 3, 1]])
+    model = GraphProd2Vec(emb_size, emb_size)
+    results = model(x, edge_index)
+    print(results)

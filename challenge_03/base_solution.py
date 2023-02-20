@@ -27,20 +27,19 @@ class GraphProd2Vec(nn.Module):
 
     def _GAT(self, emb: torch.tensor, edge: torch.tensor) -> torch.tensor:
         # should add test on matrix positive semi-definite
-        emb_dim = emb.size(dim=0)
-        emb_dim_2 = emb.size(dim=1)
-
+        batch_dim = emb.size(dim=0)
+        edge_dim = edge.size(dim=1)
         e = torch.exp(torch.matmul(emb, torch.t(emb)))
-        att_mask = torch.zeros(emb_dim, emb_dim, dtype=torch.int)
+        att_mask = torch.zeros(batch_dim, batch_dim, dtype=torch.int)
         edge = edge - 1
-        for i in range(self.out_embedding_len):
+        for i in range(edge_dim):
             att_mask[edge[0, i], edge[1, i]] = 1
             att_mask[edge[1, i], edge[0, i]] = 1
         e_adj = e * att_mask
         den = e_adj.sum(dim=1)
         att_mask_adj = e / den.unsqueeze(-1) * att_mask
-        output = torch.zeros(emb_dim, emb_dim_2)
-        for i in range(emb_dim):
+        output = torch.zeros(batch_dim, self.out_embedding_len)
+        for i in range(batch_dim):
             output[i] = (emb * att_mask_adj[i].unsqueeze(-1)).sum(dim=0)
         return output
 

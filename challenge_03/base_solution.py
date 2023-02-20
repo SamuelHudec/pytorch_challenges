@@ -37,8 +37,7 @@ class GraphProd2Vec(nn.Module):
             att_mask[edge[1, i], edge[0, i]] = 1
         e_adj = e * att_mask
         den = e_adj.sum(dim=1)
-        output = e.t() / den
-        return output.t()
+        return e/den.unsqueeze(-1)
 
     def forward(self, x: torch.tensor, edge_index: Union[torch.tensor, None]) -> Tuple[torch.tensor, torch.tensor]:
         x = self.encoder(x)

@@ -24,11 +24,11 @@ for decoder. This solution can be used in transformer.
 ## Third Challenge (Product2vec)
 
 Let's continue with creating model moduls from paper as before. Situation is now different, no examples as with MLP 
-and NLP tasks that means I have to rely on myself. This challenge touch recommendations with famous P-companion alg.
+and NLP tasks, that means I have to rely on myself. This challenge will touch recommendations with famous P-companion alg.
 For simplicity `Product2vec` from section 4.1 is enough. Key on task is to understand pipeline inputs and outputs they 
 propose. Mostly is described in figure 4. Attention head in graphs is bigger challenge not because of code, but 
 understanding role of message passing in attention mask. I like their training objective i.e. Loss function based 
-on hinge loss. 
+on hinge loss. if you want to make it more interesting, add loss function.
 
 ## My best practices
 * always develop in classical script not in jupyter notebook. This leads to the smoothness of the solution.

@@ -1,13 +1,16 @@
+import typing
 from typing import Tuple, Union
 
 import torch
 import torch.nn as nn
 
+
 class GraphProd2Vec(nn.Module):
     """
-    p-companion - main stage
+    p-companion - main stage section 4.1
     https://assets.amazon.science/d5/16/3f7809974a899a11bacdadefdf24/p-companion-a-principled-framework-for-diversified-complementary-product-recommendation.pdf
     """
+
     def __init__(self, in_embedding_len: int, out_embedding_len: int):
         super().__init__()
         self.in_embedding_len = in_embedding_len
@@ -43,19 +46,52 @@ class GraphProd2Vec(nn.Module):
             output[i] = (emb * att_mask_adj[i].unsqueeze(-1)).sum(dim=0)
         return output
 
-    def forward(self, x: torch.tensor, edge_index: Union[torch.tensor, None]) -> Tuple[torch.tensor, torch.tensor]:
+    def forward(
+        self, x: torch.tensor, edge_index: Union[torch.tensor, None]
+    ) -> Tuple[torch.tensor, torch.tensor]:
         x = self.encoder(x)
         x_GAT = None
         if edge_index is not None:
             x_GAT = self._GAT(x, edge_index)
         return x, x_GAT
 
+
+class HingeLoss(nn.Module):
+    def __init__(self, hinge_lambda: float = 1.0, hinge_epsilon: float = 1.0):
+        """
+        based on section last part of section. Its good to google more about hinge loss in general.
+        If you are not familiar with.
+        """
+        super().__init__()
+        self.hinge_lambda = hinge_lambda
+        self.hinge_epsilon = hinge_epsilon
+
+    def forward(self, x: Tuple[torch.tensor, torch.tensor], labels: torch.tensor):
+
+        theta_subtraction = x[0] - x[1]
+        theta_norm = torch.norm(theta_subtraction, p=2, dim=1) ** 2
+        theta_count = self.hinge_epsilon - labels * (self.hinge_lambda - theta_norm)
+
+        mask = labels == 1
+        positive_loss = torch.max(theta_count[mask], torch.Tensor([0]))
+        negative_loss = torch.max(theta_count[~mask], torch.Tensor([0]))
+        assert (
+            positive_loss.size() == negative_loss.size()
+        ), "positive and negative examples must be equal"
+        return torch.min(positive_loss + negative_loss)
+
+
 if __name__ == "__main__":
-    n_items = 5
+    n_items = 6
     emb_size = 50
     x = torch.rand(n_items, emb_size)
-    edge_index = torch.tensor([[1, 1, 1, 1, 3, 4, 2, 2, 5, 5], [3, 4, 5, 2, 2, 5, 4, 5, 3, 1]])
+    edge_index = torch.tensor(
+        [[1, 1, 1, 1, 3, 4, 2, 2, 5, 5, 6, 6], [3, 4, 5, 2, 2, 5, 4, 5, 3, 1, 4, 2]]
+    )
+    labels = torch.tensor(
+        [-1, 1, -1, 1, -1, 1]
+    )  # TODO: is negative and positive calculated together?
     model = GraphProd2Vec(emb_size, emb_size)
+    loss = HingeLoss()
     results = model(x, edge_index)
-    print(results) # why is gradient in attention?
-
+    print(loss(results, labels))

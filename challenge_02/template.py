@@ -8,6 +8,7 @@ class SelfAttention(nn.Module):
     If you understand self attention, you will understand the heard of transformers.
     hint: https://www.youtube.com/watch?v=yGTUuEx3GkA
     """
+
     def __init__(self):
         super().__init__()
         self.W = None
@@ -15,6 +16,7 @@ class SelfAttention(nn.Module):
     def forward(self, x):
         q, k, v = self.W
         return None
+
 
 if __name__ == "__main__":
     x = torch.randint(0, 500, (10, 50))  # tokenizer(text)

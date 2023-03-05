@@ -11,6 +11,7 @@ class SelfAttention(nn.Module):
     One of the most popular part in NLP.
     If you understand self attention, you will understand the heard of transformers.
     """
+
     def __init__(self, embedding_length: int) -> None:
         super().__init__()
         self.e_length = embedding_length
@@ -26,9 +27,10 @@ class SelfAttention(nn.Module):
         # Scaled Dot-Product Attention
         q, k, v = self.TW
         s = torch.matmul(q(x), torch.t(k(x)))
-        w = s / math.sqrt(self.e_length) # F.normalize(s)
+        w = s / math.sqrt(self.e_length)  # F.normalize(s)
         w = F.softmax(w)
         return torch.matmul(w, v(x))
+
 
 if __name__ == "__main__":
     embdd_len = 50

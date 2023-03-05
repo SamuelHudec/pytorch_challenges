@@ -18,6 +18,10 @@ class GraphProd2Vec(nn.Module):
         self.encoder = self._FFN_encoder()
 
     def _FFN_encoder(self) -> nn.Module:
+        """
+        To instance this encoder we can use our solution from challenge_01
+        eg  self.encoder = MultiLayerPerceptron([self.in_embedding_len, self.in_embedding_len, self.in_embedding_len, self.out_embedding_len], nn.Tanh, True, 0)
+        """
         w_1 = nn.Linear(self.in_embedding_len, self.in_embedding_len)
         bn_1 = nn.LayerNorm(self.in_embedding_len)
         tanh_1 = nn.Tanh()
@@ -78,7 +82,7 @@ class HingeLoss(nn.Module):
         assert (
             positive_loss.size() == negative_loss.size()
         ), "positive and negative examples must be equal"
-        return torch.min(positive_loss + negative_loss)
+        return torch.sum(positive_loss + negative_loss)
 
 
 if __name__ == "__main__":

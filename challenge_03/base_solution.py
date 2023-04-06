@@ -33,22 +33,15 @@ class GraphProd2Vec(nn.Module):
         return nn.Sequential(w_1, bn_1, tanh_1, w_2, bn_2, tanh_2, w_3, bn_3)
 
     def _GAT(self, emb: torch.tensor, edge: torch.tensor) -> torch.tensor:
-        # should add test on matrix positive semi-definite
-        batch_dim = emb.size(dim=0)
-        edge_dim = edge.size(dim=1)
-        e = torch.exp(torch.matmul(emb, torch.t(emb)))
-        att_mask = torch.zeros(batch_dim, batch_dim, dtype=torch.int)
-        edge = edge - 1
-        for i in range(edge_dim):
-            att_mask[edge[0, i], edge[1, i]] = 1
-            att_mask[edge[1, i], edge[0, i]] = 1
-        e_adj = e * att_mask
-        den = e_adj.sum(dim=1)
-        att_mask_adj = e / den.unsqueeze(-1) * att_mask
-        output = torch.zeros(batch_dim, self.out_embedding_len)
-        for i in range(batch_dim):
-            output[i] = (emb * att_mask_adj[i].unsqueeze(-1)).sum(dim=0)
-        return output
+        # edge labels must start with 0
+        labels_unique = (edge[0]).unique(dim=0)
+        e = torch.exp((emb[edge[0]] * emb[edge[1]]).sum(-1))
+        e_ni = torch.zeros_like(labels_unique, dtype=torch.float).scatter_add_(0, edge[0], e)
+        z_ij = e / e_ni[edge[0]]
+        attention = emb[edge[1]] * z_ij.unsqueeze(-1)
+        labels_att = edge[0].view(edge[0].size(0), 1).expand(-1, attention.size(1))
+        unique_labels_att = labels_att.unique(dim=0)
+        return torch.zeros_like(unique_labels_att, dtype=torch.float).scatter_add_(0, labels_att, attention)
 
     def forward(
         self, x: torch.tensor, edge_index: Union[torch.tensor, None]
@@ -90,7 +83,7 @@ if __name__ == "__main__":
     emb_size = 50
     x = torch.rand(n_items, emb_size)
     edge_index = torch.tensor(
-        [[1, 1, 1, 1, 3, 4, 2, 2, 5, 5, 6, 6], [3, 4, 5, 2, 2, 5, 4, 5, 3, 1, 4, 2]]
+        [[0, 0, 0, 0, 2, 3, 1, 1, 4, 4, 5, 5], [2, 3, 4, 1, 1, 4, 3, 4, 2, 0, 3, 1]]
     )
     labels = torch.tensor(
         [-1, 1, -1, 1, -1, 1]

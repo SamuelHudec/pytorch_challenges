@@ -42,6 +42,6 @@ if __name__ == "__main__":
 
     # feed training loop
     n_featers = 32 * 32 * 3
-    model = MultiLayerPerceptron([n_featers, 1500, 500, 100 ,10], nn.ReLU, True, 0.1)
+    model = MultiLayerPerceptron([n_featers, 1500, 500, 100, 10], nn.ReLU, True, 0.1)
     dataloader = data.DataLoader(dataset, batch_size=100, shuffle=True, num_workers=1)
     training_loop(model, dataloader, lr=0.1)
